@@ -93,7 +93,16 @@ class Piece:
         for i in range(0,I-self.x.shape[0]+1, Piece.JUMP):
             for j in range(0, J-self.x.shape[1]+1, Piece.JUMP):
                 t_new = copy.deepcopy(t)
-                t_new.name = [t.name[0], t.name[1], str(i/Piece.JUMP) + " " + str(j/Piece.JUMP)]
+                if '+' in t.name[0]:  # in case of a compound piece, add the translation to each sub piece's position
+                    temp_pos = t.name[2].split('+')
+                    temp_pos = [str(int(pair.split(' ')[0])+i/Piece.JUMP)+' '+str(int(pair.split(' ')[1])+j/Piece.JUMP) for pair in temp_pos]
+                    new_pos = temp_pos[0] # create a string with '+' from the list
+                    for pair in temp_pos[1:]:
+                        new_pos = new_pos+'+'+pair
+                    t_new.name = [t.name[0], t.name[1], new_pos]
+                else:
+                    t_new.name = [t.name[0], t.name[1], str(i / Piece.JUMP) + " " + str(j / Piece.JUMP)]
+
                 t_new.x[i:i+self.x.shape[0], j:j+self.x.shape[1]] = self.x
                 t_list.append(t_new)
 
@@ -106,6 +115,8 @@ class Piece:
     def unite(self, p):
         q = Piece()
         q.name[0] = self.name[0] + "+" + p.name[0]
+        q.name[1] = self.name[1] + "+" + p.name[1]
+        q.name[2] = self.name[2] + "+" + p.name[2]
         q.x = self.x + p.x
         return q
 
