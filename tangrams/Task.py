@@ -94,7 +94,7 @@ class Task:
             number_pieces = len(p_base)
 
         t_list = []
-        temp_x = copy.deepcopy(self.x)
+        temp_x = np.zeros(self.x.shape)
 
         for t_iter in range(0, number_pieces):             # go over all the pieces
             p_shape = p_base[order[t_iter]]               # get the next piece
