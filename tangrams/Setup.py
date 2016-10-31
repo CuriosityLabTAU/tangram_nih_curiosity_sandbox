@@ -1,4 +1,4 @@
-from tangrams import Piece
+from tangrams.Piece import *
 import numpy as np
 
 
