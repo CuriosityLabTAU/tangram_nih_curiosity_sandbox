@@ -1,3 +1,4 @@
+from tangrams import *
 import numpy as np
 import copy
 
@@ -58,18 +59,94 @@ class Piece:
         target.G = self.G
         return target
 
+    def rotate_compound(self, i):
+        #  rotate a compound piece with i*90 degrees counter clockwise
+        name_list = self.name[0].split('+')
+        rot_list = self.name[1].split('+')
+        new_rot_list = []
+        pos_list = self.name[2].split('+')
+        new_pos_list = []
+        [i_max, j_max] = self.x.shape
+        i_max = (i_max - 1)/Piece.JUMP - 1
+        j_max = (j_max - 1)/Piece.JUMP - 1
+        if len(name_list) != len(rot_list) or len(name_list) != len(pos_list):
+            print("Piece: illegal compound name", self.name)
+        for n in range(len(name_list)):
+            if 'parrallelogram' in name_list[n]:
+                if rot_list[n] == '0' or rot_list[n] == '180':
+                    width = 1
+                    height = 2
+                else:
+                    width = 2
+                    height = 1
+                new_rot = str((int(rot_list[n]) + i * 90) % 360)  # correct later
+            elif 'square' in name_list[n] or 'small triangle' in name_list[n]:
+                width = 1
+                height = 1
+                new_rot = str((int(rot_list[n]) + i*90) % 360)
+            elif 'large triangle' in name_list[n]:
+                width = 2
+                height = 2
+                new_rot = str((int(rot_list[n]) + i * 90) % 360)
+            elif 'medium triangle' in name_list[n]:
+                if rot_list[n] == '0' or rot_list[n] == '180':
+                    width = 2
+                    height = 1
+                else:
+                    width = 1
+                    height = 2
+                new_rot = str((int(rot_list[n]) + i * 90) % 360)
+
+            i_old = int(pos_list[n].split(' ')[0])
+            j_old = int(pos_list[n].split(' ')[1])
+            if i==0:
+                i_new = i_old
+                j_new = j_old
+            elif i==1:
+                i_new = j_max-j_old - (width - 1)
+                j_new = i_old
+            elif i==2:
+                i_new = i_max - i_old - (height - 1)
+                j_new = j_max - j_old - (width - 1)
+            elif i==3:
+                i_new = j_old
+                j_new = i_max - i_old - (height - 1)
+            new_pos = str(i_new)+' '+str(j_new)
+
+            new_rot_list.append(new_rot)
+            new_pos_list.append(new_pos)
+
+        new_rot_str = new_rot_list[0]
+        for rot in new_rot_list[1:]:
+            new_rot_str = new_rot_str+'+'+rot
+
+        new_pos_str = new_pos_list[0]
+        for pos in new_pos_list[1:]:
+            new_pos_str = new_pos_str+'+'+pos
+
+        self.name[1] = new_rot_str
+        self.name[2] = new_pos_str
+        self.x = np.rot90(self.x, i)
+        #return [self.name[0], new_rot_str, new_pos_str]
+
+
     def rotate(self):
         p_list = [self]
+
         for i in range(1, 4):
             p_new = copy.deepcopy(self)
-            p_new.x = np.rot90(self.x, i)
+            if '+' in p_new.name[0]:
+                p_new.rotate_compound(i)
+            else:
+                p_new.x = np.rot90(self.x, i)
+                #p_new.name = [self.name[0], str(i * 90), '']
             found = False
             for q in p_list:
                 if np.array_equal(p_new.x, q.x):
                     found = True
                     break
             if not found:
-                p_new.name = [self.name[0], str(i*90), '']
+                p_new.name = [self.name[0], str(i * 90), '']
                 p_list.append(p_new)
 
         for r in p_list:
