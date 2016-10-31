@@ -1,6 +1,7 @@
 import numpy as np
 import copy
-from tangrams import Setup
+from tangrams.Setup import *
+from tangrams.Piece import *
 INHIBITORY = -1.1
 EXCITATORY = 1.0
 HEBB = 1.0
@@ -73,6 +74,23 @@ class Network:
             p_list = p.rotate()
             for q in p_list:
                 nodes.extend(q.translate(task.I, task.J))
+        self.set_nodes(nodes)
+
+    def set_available_cmpnd_pieces(self, piece_list, size_i=5, size_j=5):
+        # set the nodes to be pieces (compound or simple) from piece_list with all translations and rotations
+        # the compound pieces are assumed to be in 0,0 (the sub-pieces can be in other positions)
+        # the board/task size is [size_i , size_j].
+        I = 1 + (size_i - 1) * Piece.JUMP
+        J = 1 + (size_j - 1) * Piece.JUMP
+        for p in piece_list:
+            p.x = p.base()
+        p_base = piece_list
+        self.p_base = p_base
+        nodes = []
+        for p in p_base:
+            p_list = p.rotate()
+            for q in p_list:
+                nodes.extend(q.translate(I, J))
         self.set_nodes(nodes)
 
     def extend_partial_network(self, task):
