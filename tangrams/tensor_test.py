@@ -54,18 +54,25 @@ def run_test():
         init = tf.initialize_all_variables()
         sess.run(init)
         for epoch in range(6000):
-
-            for step in range(2):
-                temp_inp = training_set_input[step*3].flatten()
-                temp_inp = np.array([temp_inp])
-                #temp = np.array([[1]*100])
-                temp_out = np.array([training_set_input[step*3+1]])
-                feed_dict = fill_feed_dict(temp_inp, temp_out)
-                maor, loss_value, W = sess.run([train_op, loss, weights_1], feed_dict=feed_dict)
-                if step % 100 == 0:
-                    print('loss {0}'.format(loss_value))
+            mini_batch_inp = np.array(training_set_input[1:100])
+            mini_batch_out = np.array(training_set_output[1:100])
+            feed_dict = fill_feed_dict(mini_batch_inp, mini_batch_out)
+            maor, loss_value, W = sess.run([train_op, loss, weights_1], feed_dict=feed_dict)
+            #if step % 100 == 0:
+            print('loss {0}'.format(loss_value))
 
         save_path = saver.save(sess, path)
+            #
+            # for step in range(2):
+            #     temp_inp = np.array([training_set_input[step]])
+            #     #temp = np.array([[1]*100])
+            #     temp_out = np.array([training_set_output[step]])
+            #     feed_dict = fill_feed_dict(temp_inp, temp_out)
+            #     maor, loss_value, W = sess.run([train_op, loss, weights_1], feed_dict=feed_dict)
+            #     if step % 100 == 0:
+            #         print('loss {0}'.format(loss_value))
+
+        # save_path = saver.save(sess, path)
 
 
     print '                                                                                       '
@@ -79,14 +86,13 @@ def run_test():
         step=0
         for step in range(2):
             saver.restore(sess, path)
-            temp_inp = training_set_input[step * 3].flatten()
-            temp_inp = np.array([temp_inp])
-            temp_out = np.array([training_set_input[step * 3 + 1]])
+            temp_inp = np.array([training_set_input[step]])
+            temp_out = np.array([training_set_output[step]])
             out, loss_val, desc = sess.run([output, loss, decision], feed_dict={inp: temp_inp, label: temp_out})
             print out
             print loss_val
             print desc
-            disp_training_data(training_set_input[step * 3], desc[0], training_set_input[step * 3 + 2], training_set_output[step], sol, 'test ' + str(step)) # ADD OUTPUT OF LEARNING
+            disp_training_data(training_set_input[step].reshape(17,17), desc[0], sol, 'test ' + str(step)) # ADD OUTPUT OF LEARNING
 
 #            disp_training_data(training_set_input[step * 3], out[0]>0.4*max(out[0]), training_set_input[step * 3 + 2], training_set_output[step], sol, 'test ' + str(step)) # ADD OUTPUT OF LEARNING
 # def run_test_with_rotation():
