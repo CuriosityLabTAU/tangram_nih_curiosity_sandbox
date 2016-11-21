@@ -51,7 +51,7 @@ def create_training_set():
     training_set_input = []
     training_set_output = []
 
-    for i in range(10000):
+    for i in range(100):
 
         # generate a random tangram with N pieces
         task.random_task(sol.networks[0], number_pieces=6)

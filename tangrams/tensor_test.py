@@ -7,9 +7,9 @@ import random
 
 def run_test():
     input_size = 289
-    num_hidden = 20
+    num_hidden = 312 # 40
     output_size = 312
-    learning_rate = 0.01
+    learning_rate = 0.05
 
     np.random.seed(1)
     random.seed(1)
@@ -36,11 +36,17 @@ def run_test():
     pre_act = tf.matmul(inp, weights_1)
     preactivation = pre_act + biases_1
     activation = tf.nn.sigmoid(preactivation)
+    output = activation
 
-    output_ = tf.matmul(activation, weights_2)
-    output = tf.nn.sigmoid(output_)
+    # output_ = tf.matmul(activation, weights_2)
+    # output = tf.nn.sigmoid(output_)
+
+    # output = tf.nn.sigmoid(output_)
     # output = tf.maximum(tf.sign(output_ - 0.5),0)
-    decision = tf.maximum(tf.sign(output - 0.07),0)
+    # decision = tf.maximum(tf.sign(output - 0.5),0)
+    # tf.nn.top_k(output, k=3, sorted=True, name=None)
+    # sorted = np.sort(output)
+    # decision = tf.maximum(tf.sign(output-sorted[-4]),0)
 
     loss = tf.reduce_mean(tf.square(output - label))
     # loss = -tf.reduce_mean(output * tf.log(label))
@@ -53,13 +59,16 @@ def run_test():
     with tf.Session() as sess:
         init = tf.initialize_all_variables()
         sess.run(init)
-        for epoch in range(6000):
-            mini_batch_inp = np.array(training_set_input[1:100])
-            mini_batch_out = np.array(training_set_output[1:100])
-            feed_dict = fill_feed_dict(mini_batch_inp, mini_batch_out)
-            maor, loss_value, W = sess.run([train_op, loss, weights_1], feed_dict=feed_dict)
-            #if step % 100 == 0:
+        for epoch in range(50000*1):
+            for batch_num in range(1):
+                mini_batch_inp = np.array(training_set_input[0:100+batch_num*100])
+                mini_batch_out = np.array(training_set_output[0:100+batch_num*100])
+                feed_dict = fill_feed_dict(mini_batch_inp, mini_batch_out)
+                maor, loss_value = sess.run([train_op, loss], feed_dict=feed_dict)
+                #if step % 100 == 0:
+
             print('loss {0}'.format(loss_value))
+            print epoch
 
         save_path = saver.save(sess, path)
             #
@@ -84,15 +93,16 @@ def run_test():
         # saver.restore(sess, path)
         print("Model restored.")
         step=0
-        for step in range(2):
+        for step in range(100):
             saver.restore(sess, path)
             temp_inp = np.array([training_set_input[step]])
             temp_out = np.array([training_set_output[step]])
-            out, loss_val, desc = sess.run([output, loss, decision], feed_dict={inp: temp_inp, label: temp_out})
+
+            out, loss_val = sess.run([output, loss], feed_dict={inp: temp_inp, label: temp_out})
+            desc = np.maximum(np.sign(out[0] - np.sort(out[0])[-6]), 0)
             print out
             print loss_val
-            print desc
-            disp_training_data(training_set_input[step].reshape(17,17), desc[0], sol, 'test ' + str(step)) # ADD OUTPUT OF LEARNING
+            disp_training_data(training_set_input[step].reshape(17,17), desc, sol, 'test ' + str(step)) # ADD OUTPUT OF LEARNING
 
 #            disp_training_data(training_set_input[step * 3], out[0]>0.4*max(out[0]), training_set_input[step * 3 + 2], training_set_output[step], sol, 'test ' + str(step)) # ADD OUTPUT OF LEARNING
 # def run_test_with_rotation():
