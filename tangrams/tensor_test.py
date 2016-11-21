@@ -13,7 +13,7 @@ def run_test():
 
     np.random.seed(1)
     random.seed(1)
-    sol, training_set_input, training_set_output = create_training_set()
+    sol, training_set_task, training_set_input, training_set_output = create_training_set(set_size = 1000, number_pieces = 3)
     # for k in range(len(training_set_output)):
     #     disp_training_data(training_set_input[k*3], training_set_input[k*3+1], training_set_input[k*3+2], training_set_output[k], sol,  'test '+str(k))
 
@@ -99,7 +99,7 @@ def run_test():
             temp_out = np.array([training_set_output[step]])
 
             out, loss_val = sess.run([output, loss], feed_dict={inp: temp_inp, label: temp_out})
-            desc = np.maximum(np.sign(out[0] - np.sort(out[0])[-6]), 0)
+            desc = np.maximum(np.sign(out[0] - np.sort(out[0])[-4]), 0)
             print out
             print loss_val
             disp_training_data(training_set_input[step].reshape(17,17), desc, sol, 'test ' + str(step)) # ADD OUTPUT OF LEARNING

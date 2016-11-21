@@ -36,7 +36,7 @@ def disp_training_data(board_before, activation_before, solver, title):
     plt.pause(1)
 
 
-def create_training_set():
+def create_training_set(set_size = 100, number_pieces = 6):
     sol = Solver()
     task = Task()
     task.create_from_json('{"pieces": [["large triangle2", "270", "1 0"], ["medium triangle", "180", "2 2"], ["square", "0", "0 0"], ["small triangle1", "180", "3 2"], ["large triangle1", "0", "1 2"], ["parrallelogram", "90", "2 0"]], "size": "5 5"}')
@@ -48,13 +48,15 @@ def create_training_set():
         # print sol.networks[0].nodes[n].name[0] + ' ' + sol.networks[0].nodes[n].name[1] + ' ' + sol.networks[0].nodes[n].name[2]
         dic[sol.networks[0].nodes[n].name[0] + ' ' + sol.networks[0].nodes[n].name[1] + ' ' + sol.networks[0].nodes[n].name[2]] = n
 
+    training_set_task = []
     training_set_input = []
     training_set_output = []
 
-    for i in range(100):
+    for i in range(set_size):
 
         # generate a random tangram with N pieces
-        task.random_task(sol.networks[0], number_pieces=6)
+        task.random_task(sol.networks[0], number_pieces=number_pieces)
+        training_set_task.append(task)
         training_set_input.append((np.minimum(task.x, 1)).flatten()) # only 0/1 (not 1,2,5)
 
 
@@ -132,7 +134,7 @@ def create_training_set():
         #
         # # print(training_set_input)
         # # print(training_set_output)
-    return sol, training_set_input, training_set_output
+    return sol, training_set_task, training_set_input, training_set_output
 
 # np.random.seed(1)
 # random.seed(1)

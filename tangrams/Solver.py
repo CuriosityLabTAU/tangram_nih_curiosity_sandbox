@@ -42,6 +42,10 @@ class Solver:
             net.set_available_pieces(task)
             net.init_network()
 
+    def set_activation(self, activation):
+        for net in self.networks:
+            net.set_activation(activation)
+
     def run_task(self, task, duration=100, stop=False, init_network=False):
         # stop  -   whether to stop when a correct solution is found
         # return-   network that solved and time it took to solve
