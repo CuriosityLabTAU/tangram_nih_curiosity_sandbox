@@ -142,6 +142,9 @@ class Network:
                         self.w[n1, n2] = INHIBITORY
         self.e = []
 
+    def set_activation(self, a):
+        self.a = copy.deepcopy(a)
+
     def find(self, name):
         for t in self.nodes:
             if name[0] == t.name[0] and name[1] == t.name[1] and name[2] == t.name[2]:
