@@ -137,29 +137,30 @@ class Piece:
             p_new = copy.deepcopy(self)
             if '+' in p_new.name[0]:
                 p_new.rotate_compound(i)
+                p_list.append(p_new)
             else:
                 p_new.x = np.rot90(self.x, i)
                 #p_new.name = [self.name[0], str(i * 90), '']
-            found = False
-            for q in p_list:
-                if np.array_equal(p_new.x, q.x):
-                    found = True
-                    break
-            if not found:
-                p_new.name = [self.name[0], str(i * 90), '']
-                p_list.append(p_new)
+                found = False
+                for q in p_list:
+                    if np.array_equal(p_new.x, q.x):
+                        found = True
+                        break
+                if not found:
+                    p_new.name = [self.name[0], str(i * 90), '']
+                    p_list.append(p_new)
 
-        for r in p_list:
-            p_new = copy.deepcopy(r)
-            p_new.x = np.fliplr(r.x)
-            found = False
-            for q in p_list:
-                if np.array_equal(p_new.x, q.x):
-                    found = True
-                    break
-            if not found:
-                p_new.name = [self.name[0], str(int(r.name[1])+180), '']
-                p_list.append(p_new)
+                for r in p_list:
+                    p_new = copy.deepcopy(r)
+                    p_new.x = np.fliplr(r.x)
+                    found = False
+                    for q in p_list:
+                        if np.array_equal(p_new.x, q.x):
+                            found = True
+                            break
+                    if not found:
+                        p_new.name = [self.name[0], str(int(r.name[1])+180), '']
+                        p_list.append(p_new)
 
         return p_list
 
@@ -196,6 +197,20 @@ class Piece:
         q.name[2] = self.name[2] + "+" + p.name[2]
         q.x = self.x + p.x
         return q
+
+    def decompose(self):
+        p_list = []
+        name_list = self.name[0].split('+')
+        rot_list = self.name[1].split('+')
+        pos_list = self.name[2].split('+')
+        for n in range(len(name_list)):
+            p = Piece()
+            p.create(name_list[n], rot_list[n], [int(pos_list[n].split(' ')[0]), int(pos_list[n].split(' ')[1])])
+            x_temp = np.zeros([self.I, self.J])
+            x_temp[0:p.x.shape[0], 0:p.x.shape[1]] = p.x
+            p.x = copy.deepcopy(x_temp)
+            p_list.append(p)
+        return p_list
 
     def touch(self, p):
         x = self.x + p.x
