@@ -80,10 +80,15 @@ class Piece:
                     width = 2
                     height = 1
                 new_rot = str((int(rot_list[n]) + i * 90) % 360)  # correct later
-            elif 'square' in name_list[n] or 'small triangle' in name_list[n]:
+            elif 'square' in name_list[n]:
                 width = 1
                 height = 1
-                new_rot = str((int(rot_list[n]) + i*90) % 360)
+                new_rot = str(0)
+                # new_rot = str((int(rot_list[n]) + i*90) % 360)
+            elif 'small triangle' in name_list[n]:
+                width = 1
+                height = 1
+                new_rot = str((int(rot_list[n]) + i * 90) % 360)
             elif 'large triangle' in name_list[n]:
                 width = 2
                 height = 2
@@ -132,13 +137,15 @@ class Piece:
 
     def rotate(self):
         p_list = [self]
-
-        for i in range(1, 4):
-            p_new = copy.deepcopy(self)
-            if '+' in p_new.name[0]:
+        if '+' in self.name[0]:
+            for i in range(1, 4):
+                p_new = copy.deepcopy(self)
                 p_new.rotate_compound(i)
                 p_list.append(p_new)
-            else:
+            return p_list
+        else:
+            for i in range(1, 4):
+                p_new = copy.deepcopy(self)
                 p_new.x = np.rot90(self.x, i)
                 #p_new.name = [self.name[0], str(i * 90), '']
                 found = False
@@ -150,19 +157,18 @@ class Piece:
                     p_new.name = [self.name[0], str(i * 90), '']
                     p_list.append(p_new)
 
-                for r in p_list:
-                    p_new = copy.deepcopy(r)
-                    p_new.x = np.fliplr(r.x)
-                    found = False
-                    for q in p_list:
-                        if np.array_equal(p_new.x, q.x):
-                            found = True
-                            break
-                    if not found:
-                        p_new.name = [self.name[0], str(int(r.name[1])+180), '']
-                        p_list.append(p_new)
-
-        return p_list
+            for r in p_list:
+                p_new = copy.deepcopy(r)
+                p_new.x = np.fliplr(r.x)
+                found = False
+                for q in p_list:
+                    if np.array_equal(p_new.x, q.x):
+                        found = True
+                        break
+                if not found:
+                    p_new.name = [self.name[0], str(int(r.name[1])+180), '']
+                    p_list.append(p_new)
+            return p_list
 
     def translate(self, I, J):
         t = copy.deepcopy(self)
@@ -206,7 +212,7 @@ class Piece:
         for n in range(len(name_list)):
             p = Piece()
             p.create(name_list[n], rot_list[n], [int(pos_list[n].split(' ')[0]), int(pos_list[n].split(' ')[1])])
-            x_temp = np.zeros([self.I, self.J])
+            x_temp = np.zeros_like(self.x)
             x_temp[0:p.x.shape[0], 0:p.x.shape[1]] = p.x
             p.x = copy.deepcopy(x_temp)
             p_list.append(p)
