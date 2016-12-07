@@ -30,7 +30,7 @@ def run_test():
     weights_1 = tf.Variable(tf.truncated_normal([input_size, num_hidden], stddev=1.0 / math.sqrt(float(num_hidden))),  name='weights_1')
     biases_1 = tf.Variable(tf.zeros([num_hidden]), name='biases_1')
 
-    weights_2 = tf.Variable(tf.truncated_normal([num_hidden, output_size], stddev=1.0 / math.sqrt(float(num_hidden))),  name='weights_2')
+    # weights_2 = tf.Variable(tf.truncated_normal([num_hidden, output_size], stddev=1.0 / math.sqrt(float(num_hidden))),  name='weights_2')
     # biases_2 = tf.Variable(tf.zeros([num_hidden]), name='biases_2')
 
     pre_act = tf.matmul(inp, weights_1)

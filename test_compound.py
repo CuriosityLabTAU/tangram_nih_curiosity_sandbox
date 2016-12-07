@@ -328,7 +328,7 @@ def test_activations():
     sol = Solver()
     task = Task()
     task.create_from_json(
-        '{"pieces": [["large triangle2", "270", "1 1"], ["medium triangle", "180", "0 1"], ["square", "0", "2 0"], ["small triangle2", "90", "1 0"], ["small triangle1", "0", "2 3"], ["large triangle1", "90", "1 1"], ["parrallelogram", "180", "1 3"]], "size": "5 5"}')
+        '{"pieces": [["square", "0", "2 0"], ["small triangle2", "90", "1 0"], ["large triangle1", "90", "1 1"]], "size": "5 5"}')
     sol.set_initial_task(task)
     dic = {}
     for n in range(len(sol.networks[0].nodes)):
@@ -339,6 +339,7 @@ def test_activations():
     activation = np.zeros_like(sol.networks[0].a)
     activation[84] = 1
     activation[256] = 1
+    activation[dic['large triangle1 90 1 1']] = 1
     neutral_duration = []
     test_duration = []
     print 'neutral'

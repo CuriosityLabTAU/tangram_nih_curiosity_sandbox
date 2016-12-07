@@ -33,13 +33,14 @@ def disp_training_data(board_before, activation_before, solver, title):
     # plt.subplot(1, 4, 4)
     # plt.imshow(x_after, interpolation='none')
     # plt.title(title + ' activation_after')
-    plt.pause(1)
+    plt.pause(0.1)
 
 
 def create_training_set(set_size = 100, number_pieces = 6):
     sol = Solver()
     task = Task()
     task.create_from_json('{"pieces": [["large triangle2", "270", "1 0"], ["medium triangle", "180", "2 2"], ["square", "0", "0 0"], ["small triangle1", "180", "3 2"], ["large triangle1", "0", "1 2"], ["parrallelogram", "90", "2 0"]], "size": "5 5"}')
+
     sol.set_initial_task(task)
 
     # dictionary: key = name of node, value = number of node
