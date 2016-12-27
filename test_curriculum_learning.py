@@ -90,8 +90,8 @@ def test_curric():
         sess.run(init)
         for epoch in range(5000 * 1):
             for batch_num in range(2):
-                mini_batch_inp = np.array(training_set_input[0:5])
-                mini_batch_out = np.array(training_set_output[0:5])
+                mini_batch_inp = np.array(training_set_input[0:6])
+                mini_batch_out = np.array(training_set_output[0:6])
                 feed_dict = fill_feed_dict(mini_batch_inp, mini_batch_out)
                 maor, loss_value = sess.run([train_op, loss], feed_dict=feed_dict)
                 # if step % 100 == 0:
@@ -117,13 +117,13 @@ def test_curric():
             out, loss_val = sess.run([output, loss], feed_dict={inp: temp_inp, label: temp_out})
             H = np.sum((out - 1) * np.log2(1 - out) - out * np.log2(out))/len(out[0])
             print ('H',H)
-            desc = np.maximum(np.sign(out[0] - np.sort(out[0])[-4]), 0)
+            # desc = np.maximum(np.sign(out[0] - np.sort(out[0])[-4]), 0)
             desc = np.maximum(np.sign(out[0]-0.5),0)
             print out
             print loss_val
             disp_training_data(training_set_input[step].reshape(17, 17), desc, sol,
                                'test ' + str(step))  # ADD OUTPUT OF LEARNING
-
+            plt.pause(2)
             # net, duration = sol.run_task(training_set_task[0], duration=20, stop=True, init_network=False)
             # neutral_duration.append(duration)
             # print ('neutral_duration', duration)
