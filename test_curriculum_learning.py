@@ -85,45 +85,48 @@ def test_curric():
     saver = tf.train.Saver()
     path = "/home/gorengordon/catkin_ws/src/tangram_nih_curiosity_sandbox/tangrams/curric.ckpt"
 
-    with tf.Session() as sess:
-        init = tf.initialize_all_variables()
-        sess.run(init)
-        for epoch in range(5000 * 1):
-            for batch_num in range(2):
-                mini_batch_inp = np.array(training_set_input[0:6])
-                mini_batch_out = np.array(training_set_output[0:6])
-                feed_dict = fill_feed_dict(mini_batch_inp, mini_batch_out)
-                maor, loss_value = sess.run([train_op, loss], feed_dict=feed_dict)
-                # if step % 100 == 0:
+    init = tf.initialize_all_variables()
+    for big_n in range(0,7):
+        print ('big_n', big_n)
+        with tf.Session() as sess:
+            # init = tf.initialize_all_variables()
+            sess.run(init)
+            for epoch in range(10000 * 1):
+                for batch_num in range(2):
+                    mini_batch_inp = np.array([training_set_input[big_n]])
+                    mini_batch_out = np.array([training_set_output[big_n]])
+                    feed_dict = fill_feed_dict(mini_batch_inp, mini_batch_out)
+                    maor, loss_value = sess.run([train_op, loss], feed_dict=feed_dict)
+                    # if step % 100 == 0:
 
-            print('loss {0}'.format(loss_value))
-            print epoch
+                # print('loss {0}'.format(loss_value))
+                # print epoch
 
-        save_path = saver.save(sess, path)
+            save_path = saver.save(sess, path)
 
-    neutral_duration = []
-    cond_duration = []
+        neutral_duration = []
+        cond_duration = []
 
-    with tf.Session() as sess:
-        # Restore variables from disk.
-        # saver.restore(sess, path)
-        print("Model restored.")
-        step = 0
-        for step in range(6):
-            saver.restore(sess, path)
-            temp_inp = np.array([training_set_input[step]])
-            temp_out = np.array([training_set_output[step]])
+        with tf.Session() as sess:
+            # Restore variables from disk.
+            # saver.restore(sess, path)
+            print("Model restored.")
+            step = 0
+            for step in range(7):
+                saver.restore(sess, path)
+                temp_inp = np.array([training_set_input[step]])
+                temp_out = np.array([training_set_output[step]])
 
-            out, loss_val = sess.run([output, loss], feed_dict={inp: temp_inp, label: temp_out})
-            H = np.sum((out - 1) * np.log2(1 - out) - out * np.log2(out))/len(out[0])
-            print ('H',H)
-            # desc = np.maximum(np.sign(out[0] - np.sort(out[0])[-4]), 0)
-            desc = np.maximum(np.sign(out[0]-0.5),0)
-            print out
-            print loss_val
-            disp_training_data(training_set_input[step].reshape(17, 17), desc, sol,
-                               'test ' + str(step))  # ADD OUTPUT OF LEARNING
-            plt.pause(2)
+                out, loss_val = sess.run([output, loss], feed_dict={inp: temp_inp, label: temp_out})
+                H = np.sum((out - 1) * np.log2(1 - out) - out * np.log2(out))/len(out[0])
+                print (step,'H',H)
+                # desc = np.maximum(np.sign(out[0] - np.sort(out[0])[-4]), 0)
+                desc = np.maximum(np.sign(out[0]-0.5),0)
+                # print out
+                print loss_val
+                disp_training_data(training_set_input[step].reshape(17, 17), desc, sol,
+                                   'test ' + str(step))  # ADD OUTPUT OF LEARNING
+                plt.pause(2)
             # net, duration = sol.run_task(training_set_task[0], duration=20, stop=True, init_network=False)
             # neutral_duration.append(duration)
             # print ('neutral_duration', duration)
