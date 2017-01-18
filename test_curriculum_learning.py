@@ -86,15 +86,15 @@ def test_curric():
     path = "/home/gorengordon/catkin_ws/src/tangram_nih_curiosity_sandbox/tangrams/curric.ckpt"
 
     init = tf.initialize_all_variables()
-    for big_n in range(0,7):
+    for big_n in range(1,7):
         print ('big_n', big_n)
         with tf.Session() as sess:
-            # init = tf.initialize_all_variables()
+            init = tf.initialize_all_variables()
             sess.run(init)
             for epoch in range(10000 * 1):
                 for batch_num in range(2):
-                    mini_batch_inp = np.array([training_set_input[big_n]])
-                    mini_batch_out = np.array([training_set_output[big_n]])
+                    mini_batch_inp = np.array(training_set_input[0:big_n])
+                    mini_batch_out = np.array(training_set_output[0:big_n])
                     feed_dict = fill_feed_dict(mini_batch_inp, mini_batch_out)
                     maor, loss_value = sess.run([train_op, loss], feed_dict=feed_dict)
                     # if step % 100 == 0:
